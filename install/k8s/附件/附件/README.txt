@@ -1,0 +1,1 @@
+可以使用 docker load -i  xxx.tar 导入镜像文件
