@@ -1,26 +1,20 @@
 pipeline {
     agent any
 
+    environment {
+      CC = 'clang'
+    }
+
     stages {
-        stage('Build') {
-            steps {
-                echo 'hello world'
-            }
+        stage('Example') {
+            DEBUG_FLAGS = '-g'
+        }
+        steps {
+            sh "${CC} ${DEBUG_FLAGS}"
+            sh 'printenv'
         }
     }
 
-    post {
-        changed {
-            echo 'pipeline post changed'
-        }
 
-        always {
-            echo 'pipeline post always'
-        }
-
-       success {
-            echo 'pipeline post success'
-       }
-    }
 
 }
