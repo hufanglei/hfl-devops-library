@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+
+    tools {
+       maven 'mvn-3.8.6'   //这里的名字一定要和jenkins全局配置的name一致
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+                sh "printenv"  //将环境变量打印到console中
+            }
+        }
+    }
+
+    post {
+        failure {
+            mail to: '690328661@qq.com', subject : 'The Pipeline failed :('
+        }
+    }
+
+
+
+}

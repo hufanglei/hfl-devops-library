@@ -9,4 +9,18 @@ pipeline {
         }
     }
 
+    post {
+        changed {
+            echo 'pipeline post changed'
+        }
+
+        always {
+            echo 'pipeline post always'
+        }
+
+       success {
+            echo 'pipeline post success'
+       }
+    }
+
 }
