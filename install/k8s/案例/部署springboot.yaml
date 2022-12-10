@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sprintboot-demo-deploy
+  namespace: default
+  labels:
+    app: springboot-demo
+spec:
+  selector:
+    matchLabels:
+      app: springboot-demo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: springboot-demo
+    spec:
+      containers:
+        - name: nginx
+          image: registry.cn-shenzhen.aliyuncs.com/hufanglei/springboot-demo-image:v1.0
+          ports:
+            - containerPort: 8080
+              name: springboot-demo
+          volumeMounts:
+            - name: localtime
+              mountPath: /etc/localtime
+      volumes:
+        - name: localtime
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springoot-svc
+  namespace: default
+spec:
+  selector:
+    app: springboot-demo
+  type: ClusterIP
+  ports:
+    - name: springboot-demo
+      protocol: TCP
+      port: 80
+      targetPort: 8080
+
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-http
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+spec:
+  rules: # 规则
+    - host: nginx.xudaxian.com # 指定的监听的主机域名，相当于 nginx.conf 的 server { xxx }
+      http: # 指定路由规则
+        paths:
+          - path: /
+            pathType: Prefix # 匹配规则，Prefix 前缀匹配 nginx.xudaxian.com/* 都可以匹配到
+            backend: # 指定路由的后台服务的 service 名称
+              service:
+                name: springoot-svc  # 服务名
+                port:
+                  number: 80 # 服务的端口
