@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+
+    tools {
+       maven 'mvn-3.8.6'
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+               script {  //需要在jenkins页面下载Config File Provider插件，并在Manage Jenkins > Managed files中配置maven的settings文件
+                    configFileProvider([configFile(fileId: 'adbc942b-20f5-475c-8b9e-c618a6b06b4b', variable: 'MAVEN_GLOBAL_ENV')]) {
+                        sh 'mvn -s ${MAVEN_GLOBAL_ENV} clean package'
+                        sh "printenv"  //将环境变量打印到console中
+                    }
+               }
+            }
+        }
+    }
+
+}

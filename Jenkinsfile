@@ -7,7 +7,9 @@ pipeline {
 
     stages {
         stage('Example') {
-            DEBUG_FLAGS = '-g'
+             environment {
+                   DEBUG_FLAGS = '-g'
+              }
         }
         steps {
             sh "${CC} ${DEBUG_FLAGS}"
